@@ -17,12 +17,6 @@ const handlePaste = (event) => {
       });
     }
   }
-  // const list = clipboard.readImage();
-  // if (list.toDataURL() === 'data:image/png;base64,') {
-  //   const text = clipboard.readText();
-  //   clipboard.writeText(text);
-  // }
-  // this.$refs.textareaRef.scrollTop = this.$refs.textareaRef.scrollHeight;
 };
 </script>
 

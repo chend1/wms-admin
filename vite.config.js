@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/api': {
           secure: false,
-          target: env.VITE_APP_BASE_API,
+          target: env.VITE_BASE_URL,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },

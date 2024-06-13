@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
+import { getStorage, removeStorage } from '@/utils/storage';
+import { useRouter } from 'vue-router';
 
 const baseUrl = import.meta.env.MODE === 'development'
   ? '/api'
@@ -10,13 +12,25 @@ const request = axios.create({
   timeout: 35000,
 });
 // 请求前拦截
-request.interceptors.request.use((config) => config);
+request.interceptors.request.use((config) => {
+  const token = getStorage('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 // 请求成功拦截
 const successCallback = (response) => {
   const {
-    message, code, data, result,
+    message, code, data,
   } = response.data;
-  if (result) {
+  if (code === 401) {
+    removeStorage('token');
+    const router = useRouter();
+    router.push('/login');
+    return Promise.reject(response);
+  }
+  if (code === 200) {
     return data;
   }
   ElMessage.error(`错误码${code}，${message}`);
