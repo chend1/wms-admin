@@ -1,25 +1,32 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router';
+import { asyncRoutes } from './asyncRoutes';
 
 const routes = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/home',
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/login/login.vue')
+    component: () => import('@/views/login/login.vue'),
+    meta: { title: '登录', isHiddenLayout: true },
   },
-  {
-    path: '/home',
-    name: 'home',
-    component: () => import('../views/home/home.vue')
-  }
-]
+];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes
-})
+  history: createWebHashHistory(),
+  routes,
+});
 
-export default router
+// 重置路由
+export const resetRouter = () => {
+  const asyncRoutesName = asyncRoutes.map((item) => item.name);
+  asyncRoutesName.forEach((name) => {
+    console.log(name, router.hasRoute(name));
+    if (router.hasRoute(name)) {
+      router.removeRoute(name);
+    }
+  });
+};
+export default router;
