@@ -6,13 +6,17 @@ export {
 } from './member/index';
 // 账号
 export {
-  userList, editUser, addUser, deleteUser,
+  userList, editUser, addUser, deleteUser, resetPassword,
 } from './user/index';
 // 角色
 export {
-  roleList, editRole, addRole, deleteRole,
+  roleList, editRole, addRole, deleteRole, grantRole,
 } from './role/index';
 // 菜单
 export {
   menuList, editMenu, addMenu, deleteMenu,
 } from './menu/index';
+// 公司
+export {
+  companyList, addCompany, editCompany, signCompany, deleteCompany,
+} from './company/index';

@@ -74,7 +74,7 @@ const linkClick = (link) => {
                 :class="{active: $route.path === item.path}"
                 @click="linkClick(item)"
               >
-                {{ item.name }}
+                {{ item.title || item.name }}
               </el-breadcrumb-item>
             </el-breadcrumb>
           </div>

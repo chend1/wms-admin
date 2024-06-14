@@ -32,6 +32,9 @@ module.exports = {
     'no-plusplus': 'off',
     'import/extensions': 'off',
     'no-param-reassign': 'off',
+    'vue/max-attributes-per-line': ['error', {
+      singleline: 4,
+    }],
   },
   settings: {
     'import/resolver': {

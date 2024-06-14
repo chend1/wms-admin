@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import {
-  roleList, editRole, addRole, deleteRole,
+  roleList, editRole, addRole, deleteRole, grantRole,
 } from '@/api';
 
 export default function useRoleData() {
@@ -12,9 +12,8 @@ export default function useRoleData() {
   const getRoleList = async (params, callback) => {
     searchInfo = params;
     const res = await roleList(params);
-    console.log(res);
     roleData.value = res.list;
-    total.value = res.count;
+    total.value = res.total;
     callback && callback();
   };
   // 新增角色
@@ -43,6 +42,20 @@ export default function useRoleData() {
       console.error(err);
     }
   };
+  // 授权角色
+  const grantRoleClick = async (params, callback) => {
+    try {
+      await grantRole(params);
+      getRoleList(searchInfo);
+      ElMessage({
+        type: 'success',
+        message: '授权成功',
+      });
+      callback && callback();
+    } catch (err) {
+      console.error(err);
+    }
+  };
   // 删除角色
   const deleteRoleClick = (params) => {
     ElMessageBox.confirm('确认删除该角色吗？', '警告', {
@@ -67,7 +80,7 @@ export default function useRoleData() {
   // 获取角色名称
   const getRoleName = (id) => {
     const list = roleData.value.filter((item) => item.id === id);
-    return list[0] && list[0].name;
+    return list[0] && (list[0].name || list[0].role_name);
   };
   return {
     roleData,
@@ -77,5 +90,6 @@ export default function useRoleData() {
     editRoleClick,
     deleteRoleClick,
     getRoleName,
+    grantRoleClick,
   };
 }

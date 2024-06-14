@@ -31,6 +31,7 @@ function getAccessibleRoutes(localRoutes, powerRouteList) {
     );
     if (powerRoute[0]) {
       if (item.children && item.children.length) {
+        item.meta.title = powerRoute[0].title || powerRoute[0].menu_name || item.meta.title;
         const { accessibleRoutes, showPathList } = getAccessibleRoutes(
           item.children,
           powerRouteList,
@@ -39,7 +40,7 @@ function getAccessibleRoutes(localRoutes, powerRouteList) {
         routeList.push(item);
         pathList.push(...showPathList, item.path);
       } else {
-        item.meta.title = powerRoute[0].title;
+        item.meta.title = powerRoute[0].title || powerRoute[0].menu_name || item.meta.title;
         routeList.push(item);
         pathList.push(item.path);
       }

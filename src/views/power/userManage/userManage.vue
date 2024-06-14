@@ -12,6 +12,7 @@ const {
   addUserClick,
   editUserClick,
   deleteUserClick,
+  resetPasswordClick,
 } = useUserData();
 // 搜索信息
 const searchInfo = reactive({
@@ -40,9 +41,14 @@ const handleEditUser = (row) => {
   userInfo.value = { ...row };
 };
 
+// 重置密码
+const handleResetPassword = (row) => {
+  resetPasswordClick({ id: row.id });
+};
+
 // 删除用户
-const handleDeleteUser = () => {
-  deleteUserClick({ id: userInfo.value.id });
+const handleDeleteUser = (row) => {
+  deleteUserClick({ id: row.id });
 };
 // 弹窗确认事件
 const formRef = ref();
@@ -50,11 +56,14 @@ const confirmClick = () => {
   formRef.value.validate((valid) => {
     if (valid) {
       if (isAdd.value) {
-        addUserClick(userInfo.value);
+        addUserClick(userInfo.value, () => {
+          dialogVisible.value = false;
+        });
       } else {
-        editUserClick(userInfo.value);
+        editUserClick(userInfo.value, () => {
+          dialogVisible.value = false;
+        });
       }
-      dialogVisible.value = false;
     }
   });
 };
@@ -79,7 +88,7 @@ const rules = {
       trigger: 'blur',
     },
   ],
-  role: [
+  role_id: [
     {
       required: true,
       message: '请选择角色',
@@ -92,10 +101,7 @@ const rules = {
 <template>
   <div class="user-manage">
     <div class="add-user">
-      <el-button
-        type="primary"
-        @click="handleAddUser"
-      >
+      <el-button type="primary" @click="handleAddUser">
         添加账号
       </el-button>
     </div>
@@ -113,41 +119,27 @@ const rules = {
           min-width="80"
           align="center"
         />
-        <el-table-column
-          prop="account"
-          label="账号"
-          align="center"
-        />
-        <el-table-column
-          prop="role"
-          label="角色"
-          align="center"
-        >
+        <el-table-column prop="account" label="账号" align="center" />
+        <el-table-column prop="role" label="角色" align="center">
           <template #default="scope">
-            {{ getRoleName(scope.row.role) }}
+            {{ getRoleName(scope.row.role_id) }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="create_time"
-          label="创建时间"
-          align="center"
-        />
-        <el-table-column
-          prop="principal"
-          label="状态"
-          align="center"
-        >
+        <el-table-column prop="create_time" width="180" label="创建时间" align="center" />
+        <el-table-column prop="principal" label="状态" align="center">
           <template #default="scope">
             {{ scope.row.status === 1 ? '启用' : '禁用' }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop=""
-          label="操作"
-          min-width="140"
-          align="center"
-        >
+        <el-table-column prop="" label="操作" min-width="140" align="center">
           <template #default="scope">
+            <el-button
+              type="warning"
+              size="small"
+              @click="handleResetPassword(scope.row)"
+            >
+              重置密码
+            </el-button>
             <el-button
               type="primary"
               size="small"
@@ -166,10 +158,7 @@ const rules = {
         </el-table-column>
       </el-table>
     </div>
-    <div
-      v-if="total > 0"
-      class="paging"
-    >
+    <div v-if="total > 0" class="paging">
       <el-pagination
         v-model:current-page="searchInfo.page"
         v-model:page-size="searchInfo.length"
@@ -196,34 +185,25 @@ const rules = {
         label-width="120px"
         :rules="rules"
       >
-        <el-form-item
-          label="用户名"
-          prop="name"
-        >
+        <el-form-item label="用户名" prop="name">
           <el-input v-model="userInfo.name" />
         </el-form-item>
-        <el-form-item
-          label="账号"
-          prop="account"
-        >
+        <el-form-item label="账号" prop="account">
           <el-input v-model="userInfo.account" />
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item v-if="isAdd" label="密码">
           <el-input
             v-model="userInfo.password"
             type="password"
             placeholder="不填写则使用默认密码123456"
           />
         </el-form-item>
-        <el-form-item
-          label="角色"
-          prop="role"
-        >
-          <el-select v-model="userInfo.role">
+        <el-form-item label="角色" prop="role">
+          <el-select v-model="userInfo.role_id">
             <el-option
               v-for="item in roleData"
               :key="item.id"
-              :label="item.name"
+              :label="item.role_name"
               :value="item.id"
             ></el-option>
           </el-select>
@@ -243,10 +223,7 @@ const rules = {
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button
-          type="primary"
-          @click="confirmClick"
-        > 确认 </el-button>
+        <el-button type="primary" @click="confirmClick"> 确认 </el-button>
       </span>
     </template>
   </el-dialog>
@@ -259,6 +236,9 @@ const rules = {
   background-color: #fff;
   box-sizing: border-box;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   .add-user {
     margin: 10px 0;
     box-sizing: border-box;

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, nextTick } from 'vue';
 import useRoleData from './useRoleData';
 import useMenuData from '../menuManage/useMenuData';
 
@@ -10,6 +10,7 @@ const {
   addRoleClick,
   editRoleClick,
   deleteRoleClick,
+  grantRoleClick,
 } = useRoleData();
 // 搜索信息
 const searchInfo = reactive({
@@ -37,8 +38,8 @@ const handleEditRole = (row) => {
 };
 
 // 删除角色
-const handleDeleteRole = () => {
-  deleteRoleClick({ id: roleInfo.value.id });
+const handleDeleteRole = (row) => {
+  deleteRoleClick({ id: row.id });
 };
 // 弹窗确认事件
 const confirmClick = () => {
@@ -56,7 +57,7 @@ const handleClose = () => {
 // -----------------------------------------------------
 const ruleDialogVisible = ref(false);
 // 默认选中的权限
-const ruleInfo = ref([]);
+const ruleList = ref([]);
 // 选中的权限列表
 const selectAuthList = ref([]);
 // 授权树
@@ -65,37 +66,38 @@ const { menuData, menuOptions, getMenuList } = useMenuData();
 getMenuList();
 const defaultProps = ref({
   children: 'children',
-  label: 'title',
+  label: 'menu_name',
 });
 // 授权角色
-const handleAuthRole = (row) => {
-  console.log(row);
+const handleAuthRole = async (row) => {
   roleInfo.value = row;
-  ruleInfo.value = row.menuList;
+  const list = row.auth_list ? row.auth_list.split(',') : [];
+  ruleList.value = list;
   ruleDialogVisible.value = true;
-  setTimeout(() => {
-    const menuTree = menuAuthTree.value.getCheckedNodes();
-    selectAuthList.value = menuTree;
-  });
+  await nextTick();
+  const menuTree = menuAuthTree.value.getCheckedNodes();
+  selectAuthList.value = menuTree;
+  // console.log('selectAuthList', selectAuthList.value);
 };
 // 确认点击
 const ruleConfirmClick = () => {
   const rules = selectAuthList.value.map((item) => item.id);
-  editRoleClick({
+  grantRoleClick({
     id: roleInfo.value.id,
-    menuList: rules,
+    auth_list: rules.toString(),
+  }, () => {
+    ruleDialogVisible.value = false;
   });
-  ruleDialogVisible.value = false;
 };
 
 // 授权弹窗关闭
 const handleRuleClose = () => {
-  ruleInfo.value = [];
+  ruleList.value = [];
   menuAuthTree.value.setCheckedNodes([]);
 };
 // 节点点击事件
 function nodeClick(node, all) {
-  console.log(node, all);
+  // console.log(node, all);
   const list = all.checkedNodes;
   const ids = all.checkedKeys;
   if (ids.indexOf(node.id) !== -1) {
@@ -158,7 +160,7 @@ function nodeClick(node, all) {
         height="100%"
       >
         <el-table-column
-          prop="name"
+          prop="role_name"
           label="角色名"
           min-width="80"
           align="center"
@@ -180,7 +182,7 @@ function nodeClick(node, all) {
         <el-table-column
           prop=""
           label="操作"
-          min-width="140"
+          width="220"
           align="center"
         >
           <template #default="scope">
@@ -239,7 +241,7 @@ function nodeClick(node, all) {
         label-width="120px"
       >
         <el-form-item label="角色名">
-          <el-input v-model="roleInfo.name" />
+          <el-input v-model="roleInfo.role_name" />
         </el-form-item>
         <el-form-item label="是否启用">
           <el-radio-group v-model="roleInfo.status">
@@ -277,7 +279,7 @@ function nodeClick(node, all) {
         show-checkbox
         node-key="id"
         :default-expand-all="true"
-        :default-checked-keys="ruleInfo"
+        :default-checked-keys="ruleList"
         :props="defaultProps"
         :check-strictly="true"
         @check="nodeClick"
@@ -302,6 +304,9 @@ function nodeClick(node, all) {
   background-color: #fff;
   box-sizing: border-box;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   .add-role {
     margin: 10px 0;
     box-sizing: border-box;

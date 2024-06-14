@@ -7,8 +7,6 @@ const {
 } = useMenuData();
 // 搜索信息
 const searchInfo = reactive({
-  page: 1,
-  size: 10,
   keyword: '',
 });
 getMenuList(searchInfo);
@@ -34,8 +32,8 @@ const handleEditMenu = (row) => {
 };
 
 // 删除菜单
-const handleDeleteMenu = () => {
-  deleteMenuClick({ id: menuInfo.value.id });
+const handleDeleteMenu = (row) => {
+  deleteMenuClick({ id: row.id });
 };
 // 弹窗确认事件
 const formRef = ref();
@@ -96,7 +94,7 @@ const rules = {
         :tree-props="{ children: 'children' }"
       >
         <el-table-column
-          prop="title"
+          prop="menu_name"
           label="菜单名称"
         />
         <el-table-column
@@ -177,17 +175,17 @@ const rules = {
             <el-option
               v-for="item in menuOptions"
               :key="item.id"
-              :label="item.title"
+              :label="item.menu_name"
               :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item
           label="菜单名称"
-          prop="title"
+          prop="menu_name"
         >
           <el-input
-            v-model="menuInfo.title"
+            v-model="menuInfo.menu_name"
             placeholder="请输入内容"
           />
         </el-form-item>
@@ -243,6 +241,9 @@ const rules = {
   background-color: #fff;
   box-sizing: border-box;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   .add-menu {
     margin: 10px 0;
     box-sizing: border-box;

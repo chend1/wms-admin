@@ -29,6 +29,12 @@ export const asyncRoutes = [
         meta: { title: '菜单管理', isLayout: true },
         name: 'menuManage',
       },
+      {
+        path: '/power/companyManage',
+        component: () => import('@/views/power/companyManage/companyManage.vue'),
+        meta: { title: '公司管理', isLayout: true },
+        name: 'companyManage',
+      },
     ],
-  }
+  },
 ];
