@@ -37,13 +37,21 @@ const handleEditCompany = (row) => {
 };
 
 // 弹窗确认事件
+const formRef = ref();
 const confirmClick = () => {
-  if (isAdd.value) {
-    addCompanyClick(companyInfo.value);
-  } else {
-    editCompanyClick(companyInfo.value);
-  }
-  dialogVisible.value = false;
+  formRef.value.validate((valid) => {
+    if (valid) {
+      if (isAdd.value) {
+        addCompanyClick(companyInfo.value, () => {
+          dialogVisible.value = false;
+        });
+      } else {
+        editCompanyClick(companyInfo.value, () => {
+          dialogVisible.value = false;
+        });
+      }
+    }
+  });
 };
 // 弹窗关闭事件
 const handleClose = () => {
@@ -53,6 +61,15 @@ const handleClose = () => {
 // 删除公司
 const handleDeleteCompany = (row) => {
   deleteCompanyClick({ id: row.id });
+};
+const rules = {
+  name: [
+    {
+      required: true,
+      message: '请输入公司名称',
+      trigger: 'blur',
+    },
+  ],
 };
 </script>
 
@@ -93,7 +110,7 @@ const handleDeleteCompany = (row) => {
             {{ scope.row.status === 1 ? '启用' : '禁用' }}
           </template>
         </el-table-column>
-        <el-table-column prop="" label="操作" width="220" align="center">
+        <el-table-column prop="" label="操作" width="160" align="center">
           <template #default="scope">
             <el-button
               type="primary"
@@ -101,14 +118,6 @@ const handleDeleteCompany = (row) => {
               @click="handleEditCompany(scope.row)"
             >
               编辑
-            </el-button>
-            <el-button
-              type="primary"
-              size="small"
-              plain
-              @click="handleAuthCompany(scope.row)"
-            >
-              授权
             </el-button>
             <el-button
               type="danger"
@@ -142,8 +151,8 @@ const handleDeleteCompany = (row) => {
     @close="handleClose"
   >
     <div class="form">
-      <el-form :model="companyInfo" label-width="120px">
-        <el-form-item label="公司名称">
+      <el-form ref="formRef" :model="companyInfo" :rules="rules" label-width="120px">
+        <el-form-item label="公司名称" prop="name">
           <el-input v-model="companyInfo.name" />
         </el-form-item>
         <el-form-item label="主营业务">

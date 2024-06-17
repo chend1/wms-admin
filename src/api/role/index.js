@@ -2,6 +2,9 @@ import request from '../request';
 // 获取角色列表
 export const roleList = (params) => request.get('/role/list', { params });
 
+// 获取角色下拉列表
+export const roleSelectList = (params) => request.get('/role/list/select', { params });
+
 // 新增角色
 export const addRole = (data) => request.post('/role/add', data);
 

@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import {
-  userList, editUser, addUser, deleteUser, resetPassword,
+  userList, editUser, addUser, deleteUser, resetPassword, switchCompany,
 } from '@/api';
 
 export default function useUserData() {
@@ -39,6 +39,19 @@ export default function useUserData() {
       ElMessage({
         type: 'success',
         message: '修改成功',
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  // 切换公司
+  const switchCompanyClick = async (params, callback) => {
+    try {
+      await switchCompany(params);
+      callback && callback();
+      ElMessage({
+        type: 'success',
+        message: '切换成功',
       });
     } catch (err) {
       console.error(err);
@@ -94,5 +107,6 @@ export default function useUserData() {
     editUserClick,
     deleteUserClick,
     resetPasswordClick,
+    switchCompanyClick,
   };
 }

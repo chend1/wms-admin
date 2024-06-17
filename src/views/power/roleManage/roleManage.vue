@@ -166,6 +166,12 @@ function nodeClick(node, all) {
           align="center"
         />
         <el-table-column
+          prop="role_level"
+          label="角色等级"
+          min-width="80"
+          align="center"
+        />
+        <el-table-column
           prop="create_time"
           label="创建时间"
           align="center"
@@ -242,6 +248,9 @@ function nodeClick(node, all) {
       >
         <el-form-item label="角色名">
           <el-input v-model="roleInfo.role_name" />
+        </el-form-item>
+        <el-form-item label="角色等级">
+          <el-input v-model="roleInfo.role_level" placeholder="角色等级为1-99，默认为1" />
         </el-form-item>
         <el-form-item label="是否启用">
           <el-radio-group v-model="roleInfo.status">

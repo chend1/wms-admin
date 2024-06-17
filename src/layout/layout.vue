@@ -2,14 +2,21 @@
 import { Operation, ArrowDown, ArrowRight } from '@element-plus/icons-vue';
 import { useMainStore } from '@/store';
 import { ref, computed } from 'vue';
-
 import MenuItem from './components/MenuItem.vue';
+import CompanyList from './components/CompanyList.vue';
 
 const baseStore = useMainStore();
 const isCollapse = ref(false);
 
 // 面包屑
 const linkList = computed(() => baseStore.linkList);
+const companyInfo = computed(() => baseStore.companyInfo);
+
+const isShowCompany = ref(false);
+const changeCompany = () => {
+  isShowCompany.value = false;
+  window.location.reload();
+};
 
 // 退出登录
 const logOutClick = () => {
@@ -23,22 +30,20 @@ const linkClick = (link) => {
 
 <template>
   <div class="layout">
-    <div
-      class="aside"
-      :class="{ collapse: isCollapse }"
-    >
+    <div class="aside" :class="{ collapse: isCollapse }">
       <div class="title">
         <div class="logo">
           <img
-            src=""
+            v-if="companyInfo.show_company_logo"
+            :src="companyInfo.show_company_logo"
             alt="后台管理系统"
             title="后台管理系统"
           />
+          <svg-icon v-else name="company" />
         </div>
-        <span
-          v-show="!isCollapse"
-          style="white-space: nowrap"
-        >后台管理系统</span>
+        <span v-show="!isCollapse" style="white-space: nowrap">{{
+          companyInfo.show_company_name
+        }}</span>
       </div>
       <div class="menu-wrap">
         <el-menu
@@ -59,10 +64,7 @@ const linkClick = (link) => {
     <div class="article">
       <div class="head">
         <div class="menu">
-          <div
-            class="icon"
-            @click="isCollapse = !isCollapse"
-          >
+          <div class="icon" @click="isCollapse = !isCollapse">
             <el-icon><Operation /></el-icon>
           </div>
           <div class="list">
@@ -71,7 +73,7 @@ const linkClick = (link) => {
                 v-for="item in linkList"
                 :key="item.path"
                 :to="{ path: item.path }"
-                :class="{active: $route.path === item.path}"
+                :class="{ active: $route.path === item.path }"
                 @click="linkClick(item)"
               >
                 {{ item.title || item.name }}
@@ -83,10 +85,7 @@ const linkClick = (link) => {
           <el-dropdown>
             <div class="info">
               <div class="avatar">
-                <img
-                  :src="baseStore.userInfo.avatar"
-                  alt=""
-                />
+                <img :src="baseStore.userInfo.avatar" alt="" />
               </div>
               <div class="name">
                 {{ baseStore.userInfo.name }}
@@ -95,8 +94,12 @@ const linkClick = (link) => {
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="linkClick">
-                  关于我们
+                <el-dropdown-item> 个人中心 </el-dropdown-item>
+                <el-dropdown-item
+                  v-if="baseStore.companyInfo.isChange"
+                  @click="isShowCompany = true"
+                >
+                  切换公司
                 </el-dropdown-item>
                 <el-dropdown-item @click="logOutClick">
                   退出登录
@@ -111,6 +114,11 @@ const linkClick = (link) => {
       </div>
     </div>
   </div>
+  <CompanyList
+    v-if="isShowCompany"
+    @close="isShowCompany = false"
+    @confirm="changeCompany"
+  ></CompanyList>
 </template>
 
 <style scoped lang="less">
@@ -134,13 +142,19 @@ const linkClick = (link) => {
       overflow: hidden;
       box-sizing: border-box;
       padding: 0 15px;
+      border-bottom: 1px solid #2f3944;
       .logo {
         width: 40px;
         height: 40px;
         border-radius: 50%;
         overflow: hidden;
-        background-color: #fff;
+        background-color: #409eff;
         margin-right: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #fff;
         img {
           width: 100%;
         }
@@ -197,8 +211,8 @@ const linkClick = (link) => {
         }
         .list {
           margin-left: 15px;
-          .active{
-            :deep(.is-link){
+          .active {
+            :deep(.is-link) {
               color: #4694fa;
             }
           }

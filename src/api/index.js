@@ -6,11 +6,11 @@ export {
 } from './member/index';
 // 账号
 export {
-  userList, editUser, addUser, deleteUser, resetPassword,
+  userList, editUser, addUser, deleteUser, resetPassword, switchCompany,
 } from './user/index';
 // 角色
 export {
-  roleList, editRole, addRole, deleteRole, grantRole,
+  roleList, editRole, addRole, deleteRole, grantRole, roleSelectList,
 } from './role/index';
 // 菜单
 export {

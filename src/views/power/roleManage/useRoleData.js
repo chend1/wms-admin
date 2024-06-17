@@ -1,11 +1,12 @@
 import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import {
-  roleList, editRole, addRole, deleteRole, grantRole,
+  roleList, editRole, addRole, deleteRole, grantRole, roleSelectList,
 } from '@/api';
 
 export default function useRoleData() {
   const roleData = ref([]);
+  const roleSelectData = ref([]);
   const total = ref(0);
   let searchInfo = {};
   // 获取角色列表
@@ -14,6 +15,13 @@ export default function useRoleData() {
     const res = await roleList(params);
     roleData.value = res.list;
     total.value = res.total;
+    callback && callback();
+  };
+
+  // 获取角色下拉列表
+  const getRoleSelectList = async (params, callback) => {
+    const res = await roleSelectList(params);
+    roleSelectData.value = res.list;
     callback && callback();
   };
   // 新增角色
@@ -84,6 +92,7 @@ export default function useRoleData() {
   };
   return {
     roleData,
+    roleSelectData,
     total,
     getRoleList,
     addRoleClick,
@@ -91,5 +100,6 @@ export default function useRoleData() {
     deleteRoleClick,
     getRoleName,
     grantRoleClick,
+    getRoleSelectList,
   };
 }

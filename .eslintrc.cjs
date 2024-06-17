@@ -35,6 +35,7 @@ module.exports = {
     'vue/max-attributes-per-line': ['error', {
       singleline: 4,
     }],
+    'import/no-cycle': 'off',
   },
   settings: {
     'import/resolver': {

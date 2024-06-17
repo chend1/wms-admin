@@ -2,9 +2,15 @@
 import { reactive, ref } from 'vue';
 import useUserData from './useUserData';
 import useRoleData from '../roleManage/useRoleData';
+import useCompanyData from '../companyManage/useCompanyData';
 
-const { roleData, getRoleList, getRoleName } = useRoleData();
+const {
+  roleData, roleSelectData, getRoleList, getRoleName, getRoleSelectList,
+} = useRoleData();
 getRoleList({ page: 1, size: 100 });
+getRoleSelectList();
+const { companyData, getCompanyList } = useCompanyData();
+getCompanyList({ page: 1, size: 100 });
 const {
   userData,
   total,
@@ -189,7 +195,17 @@ const rules = {
           <el-input v-model="userInfo.name" />
         </el-form-item>
         <el-form-item label="账号" prop="account">
-          <el-input v-model="userInfo.account" />
+          <el-input v-model="userInfo.account" :disabled="!isAdd" />
+        </el-form-item>
+        <el-form-item label="所属公司" prop="role">
+          <el-select v-model="userInfo.company_id">
+            <el-option
+              v-for="item in companyData"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="isAdd" label="密码">
           <el-input
@@ -198,7 +214,17 @@ const rules = {
             placeholder="不填写则使用默认密码123456"
           />
         </el-form-item>
-        <el-form-item label="角色" prop="role">
+        <el-form-item v-if="isAdd" label="角色" prop="role">
+          <el-select v-model="userInfo.role_id">
+            <el-option
+              v-for="item in roleSelectData"
+              :key="item.id"
+              :label="item.role_name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-else label="角色" prop="role">
           <el-select v-model="userInfo.role_id">
             <el-option
               v-for="item in roleData"
@@ -207,6 +233,9 @@ const rules = {
               :value="item.id"
             ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="userInfo.phone" />
         </el-form-item>
         <el-form-item label="是否启用">
           <el-radio-group v-model="userInfo.status">

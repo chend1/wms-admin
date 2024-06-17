@@ -13,3 +13,6 @@ export const addUser = (data) => request.post('/account/add', data);
 
 // 删除账号信息
 export const deleteUser = (data) => request.post('/account/delete', data);
+
+// 切换公司
+export const switchCompany = (data) => request.post('/account/edit/company', data);

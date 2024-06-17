@@ -11,6 +11,7 @@ export const useMainStore = defineStore('main', {
     userInfo: {},
     menuList: [],
     linkList: [],
+    companyInfo: {},
   }),
   actions: {
     setToken(token) {
@@ -20,6 +21,7 @@ export const useMainStore = defineStore('main', {
     async setUserInfo() {
       const res = await getUserInfo();
       this.userInfo = res.info;
+      this.companyInfo = res.companyInfo;
       const { accessibleRoutes, menuList } = await generateRoutes(asyncRoutes, res.menu);
       this.menuList = menuList;
       accessibleRoutes.forEach((route) => {
