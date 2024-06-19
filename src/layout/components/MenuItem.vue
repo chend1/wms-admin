@@ -4,8 +4,8 @@ defineProps({
     type: Object,
     default() {
       return {};
-    },
-  },
+    }
+  }
 });
 </script>
 
@@ -16,9 +16,13 @@ defineProps({
     :index="menuInfo.path"
   >
     <el-icon>
+      <svg-icon
+        v-if="menuInfo.icon && menuInfo.icon.indexOf('svg') !== -1"
+        :name="menuInfo.icon.split('-')[1]"
+      />
       <component
         :is="menuInfo.icon"
-        v-if="menuInfo.icon"
+        v-if="menuInfo.icon && menuInfo.icon.indexOf('svg') === -1"
         class="myIcon"
       ></component>
     </el-icon>
@@ -26,17 +30,19 @@ defineProps({
       <span>{{ menuInfo.title || menuInfo.menu_name }}</span>
     </template>
   </el-menu-item>
-  <el-sub-menu
-    v-else
-    :index="menuInfo.path"
-  >
+  <el-sub-menu v-else :index="menuInfo.path">
     <template #title>
       <el-icon>
-        <component
-          :is="menuInfo.icon"
-          v-if="menuInfo.icon"
-          class="myIcon"
-        ></component>
+        <svg-icon
+        v-if="menuInfo.icon && menuInfo.icon.indexOf('svg') !== -1"
+        :name="menuInfo.svg_icon"
+        class="myIcon"
+      />
+      <component
+        :is="menuInfo.icon"
+        v-if="menuInfo.icon && menuInfo.icon.indexOf('svg') === -1"
+        class="myIcon"
+      ></component>
       </el-icon>
       <span>{{ menuInfo.title || menuInfo.menu_name }}</span>
     </template>
@@ -55,6 +61,7 @@ defineProps({
   width: 18px;
   height: 18px;
   margin-right: 5px;
+  color: #fff;
 }
 :deep(.el-menu-item-group__title) {
   display: none;

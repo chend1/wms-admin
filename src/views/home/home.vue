@@ -28,6 +28,14 @@ const handlePaste = (event) => {
         name="message"
         color="#eee"
       />
+      <svg-icon
+        name="product"
+        color="#eee"
+      />
+      <svg-icon
+        name="company"
+        color="#eee"
+      />
     </div>
     <div class="box">
       <h3>https/localhost 文本复制粘贴和剪切功能</h3>

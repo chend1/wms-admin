@@ -37,4 +37,30 @@ export const asyncRoutes = [
       },
     ],
   },
+  {
+    path: '/product',
+    redirect: '/product/productManage',
+    meta: { title: '产品管理', isLayout: true },
+    name: 'product',
+    children: [
+      {
+        path: '/product/productManage',
+        component: () => import('@/views/product/productManage/productManage.vue'),
+        meta: { title: '产品管理', isLayout: true },
+        name: 'productManage',
+      },
+      {
+        path: '/product/unitManage',
+        component: () => import('@/views/product/unitManage/unitManage.vue'),
+        meta: { title: '单位管理', isLayout: true },
+        name: 'unitManage',
+      },
+      {
+        path: '/product/groupManage',
+        component: () => import('@/views/product/groupManage/groupManage.vue'),
+        meta: { title: '产品分类管理', isLayout: true },
+        name: 'groupManage',
+      }
+    ],
+  },
 ];
