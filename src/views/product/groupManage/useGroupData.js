@@ -3,14 +3,19 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import {
   groupList, editGroup, addGroup, deleteGroup,
 } from '@/api';
+import { flatArray } from '@/utils';
 
 export default function useGroupData() {
   const groupData = ref([]);
+  const groupOptions = ref([]);
   let searchInfo = {};
   // 获取产品分类列表
   const getGroupList = async (params, callback) => {
     searchInfo = params;
     const res = await groupList(params);
+    // 一维菜单列表
+    groupOptions.value = flatArray(res.list);
+    console.log(groupOptions.value);
     groupData.value = res.list;
     callback && callback();
   };
@@ -67,6 +72,7 @@ export default function useGroupData() {
   };
   return {
     groupData,
+    groupOptions,
     getGroupList,
     addGroupClick,
     editGroupClick,

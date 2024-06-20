@@ -86,11 +86,10 @@ const rules = {
         />
         <el-table-column
           prop="create_time"
-          width="180"
           label="创建时间"
           align="center"
         />
-        <el-table-column prop="" label="操作" min-width="140" align="center">
+        <el-table-column prop="" label="操作" width="180" align="center">
           <template #default="scope">
             <el-button
               type="primary"

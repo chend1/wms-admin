@@ -4,6 +4,7 @@ import useGroupData from './useGroupData';
 
 const {
   groupData,
+  groupOptions,
   getGroupList,
   addGroupClick,
   editGroupClick,
@@ -60,20 +61,13 @@ const handleClose = () => {
 };
 
 const rules = {
-  title: [
+  name: [
     {
       required: true,
       message: '请输入分类名称',
       trigger: 'blur'
     }
   ],
-  path: [
-    {
-      required: true,
-      message: '请输入分类路径',
-      trigger: 'blur'
-    }
-  ]
 };
 </script>
 
@@ -92,14 +86,18 @@ const rules = {
         row-key="id"
         :tree-props="{ children: 'children' }"
       >
-        <el-table-column prop="Group_name" label="分类名称" />
-        <el-table-column prop="path" label="路径" align="center" />
+        <el-table-column prop="name" label="分类名称" />
         <el-table-column prop="sort" label="排序" align="center" />
-        <el-table-column prop="status" label="状态" align="center">
+        <el-table-column
+          prop="status"
+          label="状态"
+          align="center"
+        >
           <template #default="scope">
-            {{ scope.row.status === 1 ? '显示' : '隐藏' }}
+            {{ scope.row.status === 1 ? '启用' : '禁用' }}
           </template>
         </el-table-column>
+        <el-table-column prop="create_time" label="创建时间" align="center" />
         <el-table-column prop="" label="操作" width="220" align="center">
           <template #default="scope">
             <el-button
@@ -152,29 +150,27 @@ const rules = {
             filterable
           >
             <el-option
-              v-for="item in GroupOptions"
+              label="无"
+              :value="0"
+            />
+            <el-option
+              v-for="item in groupOptions"
               :key="item.id"
-              :label="item.Group_name"
+              :label="item.name"
               :value="item.id"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="分类名称" prop="Group_name">
-          <el-input v-model="groupInfo.Group_name" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="前端路径" prop="path">
-          <el-input v-model="groupInfo.path" placeholder="请输入内容" />
+        <el-form-item label="分类名称" prop="name">
+          <el-input v-model="groupInfo.name" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="排序">
           <el-input v-model="groupInfo.sort" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="图标">
-          <el-input v-model="groupInfo.icon" placeholder="请输入内容" />
-        </el-form-item>
         <el-form-item label="是否启用">
           <el-radio-group v-model="groupInfo.status">
-            <el-radio :label="1"> 显示 </el-radio>
-            <el-radio :label="0"> 隐藏 </el-radio>
+            <el-radio :label="1"> 启用 </el-radio>
+            <el-radio :label="0"> 禁用 </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>

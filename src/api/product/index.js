@@ -10,3 +10,6 @@ export const addProduct = (data) => request.post('/product/add', data);
 
 // 删除商品信息
 export const deleteProduct = (data) => request.post('/product/delete', data);
+
+// 获取随机数
+export const getProductCode = () => request.get('/product/code');

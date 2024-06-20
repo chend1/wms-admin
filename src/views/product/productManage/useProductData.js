@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import {
-  productList, editProduct, addProduct, deleteProduct,
+  productList, editProduct, addProduct, deleteProduct, getProductCode,
 } from '@/api';
 
 export default function useProductData() {
@@ -65,11 +65,18 @@ export default function useProductData() {
       })
       .catch(() => {});
   };
+
+  // 获取产品编码
+  const getProductCodeClick = async () => {
+    const res = await getProductCode();
+    return res;
+  }
   return {
     productData,
     getProductList,
     addProductClick,
     editProductClick,
     deleteProductClick,
+    getProductCodeClick,
   };
 }
