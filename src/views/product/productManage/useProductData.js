@@ -1,7 +1,14 @@
 import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import {
-  productList, editProduct, addProduct, deleteProduct, getProductCode,
+  productList,
+  editProduct,
+  addProduct,
+  deleteProduct,
+  getProductCode,
+  editProductSpec,
+  addProductSpec,
+  deleteProductSpec
 } from '@/api';
 
 export default function useProductData() {
@@ -12,6 +19,7 @@ export default function useProductData() {
     searchInfo = params;
     const res = await productList(params);
     productData.value = res.list;
+    // console.log('productData.value', productData.value);
     callback && callback();
   };
 
@@ -23,7 +31,7 @@ export default function useProductData() {
       callback && callback();
       ElMessage({
         type: 'success',
-        message: '新增成功',
+        message: '新增成功'
       });
     } catch (err) {
       console.error(err);
@@ -37,7 +45,7 @@ export default function useProductData() {
       getProductList(searchInfo);
       ElMessage({
         type: 'success',
-        message: '修改成功',
+        message: '修改成功'
       });
     } catch (err) {
       console.error(err);
@@ -45,11 +53,11 @@ export default function useProductData() {
   };
 
   // 删除产品
-  const deleteProductClick = (params) => {
+  const deleteProductClick = params => {
     ElMessageBox.confirm('确认删除该产品吗？', '警告', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
-      type: 'warning',
+      type: 'warning'
     })
       .then(async () => {
         try {
@@ -57,7 +65,7 @@ export default function useProductData() {
           getProductList(searchInfo);
           ElMessage({
             type: 'success',
-            message: '删除成功',
+            message: '删除成功'
           });
         } catch (err) {
           console.error(err);
@@ -70,7 +78,57 @@ export default function useProductData() {
   const getProductCodeClick = async () => {
     const res = await getProductCode();
     return res;
+  };
+  // 新增产品规格
+  const addProductSpecClick = async (params, callback) => {
+    try {
+      await addProductSpec(params);
+      callback && callback();
+      getProductList(searchInfo);
+      ElMessage({
+        type: 'success',
+        message: '新增成功'
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
+  // 修改产品规格
+  const editProductSpecClick = async (params, callback) => {
+    try {
+      await editProductSpec(params);
+      callback && callback();
+      getProductList(searchInfo);
+      ElMessage({
+        type: 'success',
+        message: '修改成功'
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 删除产品规格
+  const deleteProductSpecClick = params => {
+    ElMessageBox.confirm('确认删除该产品规格吗？', '警告', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+      .then(async () => {
+        try {
+          await deleteProductSpec(params);
+          getProductList(searchInfo);
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      })
+      .catch(() => {});
+  };
   return {
     productData,
     getProductList,
@@ -78,5 +136,8 @@ export default function useProductData() {
     editProductClick,
     deleteProductClick,
     getProductCodeClick,
+    addProductSpecClick,
+    editProductSpecClick,
+    deleteProductSpecClick
   };
 }

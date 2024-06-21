@@ -70,6 +70,12 @@ export default function useGroupData() {
       })
       .catch(() => {});
   };
+
+  // 获取产品分类名称
+  const getGroupName = (id) => {
+    const list = groupData.value.filter((item) => item.id === id);
+    return list[0] && (list[0].name || list[0].group_name);
+  }
   return {
     groupData,
     groupOptions,
@@ -77,5 +83,6 @@ export default function useGroupData() {
     addGroupClick,
     editGroupClick,
     deleteGroupClick,
+    getGroupName,
   };
 }

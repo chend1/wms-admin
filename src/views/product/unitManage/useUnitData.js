@@ -65,11 +65,18 @@ export default function useUnitData() {
       })
       .catch(() => {});
   };
+
+  // 获取单位名称
+  const getUnitName = (id) => {
+    const unit = unitData.value.find((item) => item.id === id);
+    return unit && (unit.name || unit.unit);
+  }
   return {
     unitData,
     getUnitList,
     addUnitClick,
     editUnitClick,
     deleteUnitClick,
+    getUnitName,
   };
 }

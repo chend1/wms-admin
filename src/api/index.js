@@ -47,7 +47,10 @@ export {
   editProduct,
   addProduct,
   deleteProduct,
-  getProductCode
+  getProductCode,
+  editProductSpec,
+  addProductSpec,
+  deleteProductSpec
 } from './product/index';
 
 // 产品单位
