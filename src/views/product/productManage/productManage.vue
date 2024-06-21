@@ -257,7 +257,7 @@ const specRules = {
       <el-button type="primary" @click="handleAddProduct"> 添加产品 </el-button>
     </div>
     <div class="table">
-      <el-collapse v-model="activeNames">
+      <el-collapse v-model="activeNames" v-if="productData.length">
         <el-collapse-item v-for="item in productData" :name="item.id">
           <template #title>
             <div class="head">
@@ -346,6 +346,7 @@ const specRules = {
           </el-table>
         </el-collapse-item>
       </el-collapse>
+      <el-empty v-else description="暂无" />
     </div>
     <el-dialog
       v-model="dialogVisible"
