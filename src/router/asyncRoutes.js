@@ -52,8 +52,14 @@ export const asyncRoutes = [
       {
         path: '/product/unitManage',
         component: () => import('@/views/product/unitManage/unitManage.vue'),
-        meta: { title: '单位管理', isLayout: true },
+        meta: { title: '产品单位管理', isLayout: true },
         name: 'unitManage',
+      },
+      {
+        path: '/product/dealCompanyManage',
+        component: () => import('@/views/product/dealCompanyManage/dealCompanyManage.vue'),
+        meta: { title: '往来单位管理', isLayout: true },
+        name: 'dealCompanyManage',
       },
       {
         path: '/product/groupManage',
@@ -61,6 +67,20 @@ export const asyncRoutes = [
         meta: { title: '产品分类管理', isLayout: true },
         name: 'groupManage',
       }
+    ],
+  },
+  {
+    path: '/warehouse',
+    redirect: '/warehouse/inStorage',
+    meta: { title: '仓储管理', isLayout: true },
+    name: 'warehouse',
+    children: [
+      {
+        path: '/warehouse/inStorage',
+        component: () => import('@/views/warehouse/inStorage/inStorage.vue'),
+        meta: { title: '入库单', isLayout: true },
+        name: 'inStorage',
+      },
     ],
   },
 ];

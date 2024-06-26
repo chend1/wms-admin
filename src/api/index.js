@@ -41,6 +41,14 @@ export {
   deleteCompany
 } from './company/index';
 
+// 往来公司
+export {
+  dealCompanyList,
+  addDealCompany,
+  editDealCompany,
+  deleteDealCompany
+} from './deal_company/index';
+
 // 产品
 export {
   productList,
@@ -63,3 +71,16 @@ export {
   addGroup,
   deleteGroup
 } from './product_group/index';
+
+// 入库单
+export {
+  inStorageList,
+  addInstorage,
+  editInstorage,
+  deleteInstorage,
+  getInstorageDetail,
+  addInstorageDetail,
+  editInstorageDetail,
+  deleteInstorageDetail,
+  getInstorageCode,
+} from './inStorage/index';

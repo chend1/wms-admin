@@ -99,6 +99,12 @@ export default function useUserData() {
       })
       .catch(() => {});
   };
+
+  // 获取名称
+  const getUserName = (id) => {
+    const user = userData.value.find((item) => item.id === id);
+    return user && user.name;
+  }
   return {
     userData,
     total,
@@ -108,5 +114,6 @@ export default function useUserData() {
     deleteUserClick,
     resetPasswordClick,
     switchCompanyClick,
+    getUserName,
   };
 }

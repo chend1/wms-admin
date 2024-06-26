@@ -13,12 +13,14 @@ import {
 
 export default function useProductData() {
   const productData = ref([]);
+  const productSelectData = ref([]);
   let searchInfo = {};
   // 获取产品列表
   const getProductList = async (params, callback) => {
     searchInfo = params;
     const res = await productList(params);
     productData.value = res.list;
+    productSelectData.value = res.selec_list;
     // console.log('productData.value', productData.value);
     callback && callback();
   };
@@ -131,6 +133,7 @@ export default function useProductData() {
   };
   return {
     productData,
+    productSelectData,
     getProductList,
     addProductClick,
     editProductClick,
