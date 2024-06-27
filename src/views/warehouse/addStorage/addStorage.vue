@@ -2,7 +2,7 @@
 import { reactive, ref, computed } from 'vue';
 import useDealCompanyData from '@/views/product/dealCompanyManage/useDealCompanyData';
 import useProductData from '@/views/product/productManage/useProductData';
-import useRemoveStorageData from './useRemoveStorageData';
+import useAddStorageData from './useAddStorageData';
 import useUnitData from '@/views/product/unitManage/useUnitData';
 import useUserData from '@/views/power/userManage/useUserData';
 import { useMainStore } from '@/store';
@@ -11,7 +11,7 @@ import { ElMessage } from 'element-plus';
 // 往来公司
 const { dealCompanyData, getDealCompanyList, getDealCompanyName } =
   useDealCompanyData();
-getDealCompanyList({ page: 1, size: 100, type: 2 });
+getDealCompanyList({ page: 1, size: 100, type: 1 });
 
 // 产品列表
 const { productSelectData, getProductList } = useProductData();
@@ -26,16 +26,16 @@ const { getUnitList, getUnitName } = useUnitData();
 getUnitList();
 
 const {
-  removeStorageData,
+  addStorageData,
   total,
-  getRemoveStorageList,
-  addRemoveStorageClick,
-  editRemoveStorageClick,
-  deleteRemoveStorageClick,
-  getRemoveStorageDetailClick,
-  getRemoveStorageCodeClick,
-  editRemoveStorageStatusClick
-} = useRemoveStorageData();
+  getAddStorageList,
+  addAddStorageClick,
+  editAddStorageClick,
+  deleteAddStorageClick,
+  getAddStorageDetailClick,
+  getAddStorageCodeClick,
+  editAddStorageStatusClick
+} = useAddStorageData();
 
 const mainStore = useMainStore();
 const userInfo = computed(() => mainStore.userInfo);
@@ -45,51 +45,51 @@ const searchInfo = reactive({
   page: 1,
   size: 10
 });
-getRemoveStorageList(searchInfo);
+getAddStorageList(searchInfo);
 const timeChange = () => {
   searchInfo.strat_time = searchInfo.times[0] || '';
   searchInfo.end_time = searchInfo.times[1] || '';
 }
-// 出库单信息
-const removeStorageInfo = ref({});
+// 入库单信息
+const addStorageInfo = ref({});
 
 // 弹窗信息
 const dialogVisible = ref(false);
 const isAdd = ref(false);
 
-// 新增出库单
-const handleAddRemoveStorage = async () => {
-  const res = await getRemoveStorageCodeClick();
-  removeStorageInfo.value.remove_code = res.code;
+// 新增入库单
+const handleAddAddStorage = async () => {
+  const res = await getAddStorageCodeClick();
+  addStorageInfo.value.add_code = res.code;
   isAdd.value = true;
   dialogVisible.value = true;
 };
 
-// 修改出库单
+// 修改入库单
 const oldProductList = ref([]);
-const handleEditRemoveStorage = async row => {
+const handleEditAddStorage = async row => {
   const ids = new Set();
-  const res = await getRemoveStorageDetailClick({ id: row.id });
+  const res = await getAddStorageDetailClick({ id: row.id });
   res.list.forEach(item => {
     ids.add(item.product_spec_id);
   });
   isAdd.value = false;
-  removeStorageInfo.value = { ...row };
-  removeStorageInfo.value.selectId = [...ids];
+  addStorageInfo.value = { ...row };
+  addStorageInfo.value.selectId = [...ids];
   oldProductList.value = res.list;
   handleProductSelect();
   dialogVisible.value = true;
 };
 
-// 删除出库单
-const handleDeleteRemoveStorage = row => {
-  deleteRemoveStorageClick({ id: row.id });
+// 删除入库单
+const handleDeleteAddStorage = row => {
+  deleteAddStorageClick({ id: row.id });
 };
 // 弹窗确认事件
 const formRef = ref();
 const confirmClick = () => {
   let isOver = false;
-  const list = removeStorageInfo.value.productList.map(item => {
+  const list = addStorageInfo.value.productList.map(item => {
     if (
       !item.product_num ||
       item.product_num === 0 ||
@@ -113,22 +113,21 @@ const confirmClick = () => {
     return ElMessage.warning('产品价格和数量不能为零或者为空！');
   }
   const params = {
-    remove_code: removeStorageInfo.value.remove_code,
-    remove_time: removeStorageInfo.value.remove_time,
-    deal_company_id: removeStorageInfo.value.deal_company_id,
-    description: removeStorageInfo.value.description,
+    add_code: addStorageInfo.value.add_code,
+    add_time: addStorageInfo.value.add_time,
+    deal_company_id: addStorageInfo.value.deal_company_id,
+    description: addStorageInfo.value.description,
     productList: JSON.stringify(list)
   };
-  // console.log(params, removeStorageInfo.value);
   formRef.value.validate(valid => {
     if (valid) {
       if (isAdd.value) {
         params.register_id = userInfo.value.id;
-        addRemoveStorageClick(params, () => {
+        addAddStorageClick(params, () => {
           dialogVisible.value = false;
         });
       } else {
-        params.id = removeStorageInfo.value.id;
+        params.id = addStorageInfo.value.id;
         params.update_id = userInfo.value.id;
         const deleteIds = oldProductList.value
           .filter(item => {
@@ -138,21 +137,21 @@ const confirmClick = () => {
           .map(item => item.id);
         params.deleteIds = JSON.stringify(deleteIds);
         // console.log('params', params);
-        editRemoveStorageClick(params, () => {
+        editAddStorageClick(params, () => {
           dialogVisible.value = false;
         });
       }
     }
   });
 };
-// 审核出库单
+// 审核入库单
 const checkInfo = ref({});
 const checkDialogVisible = ref(false);
 const status = ref(1);
 const isAudit = ref(false);
-const handleCheckRemoveStorage = async (row, type) => {
+const handleCheckAddStorage = async (row, type) => {
   isAudit.value = type;
-  const res = await getRemoveStorageDetailClick({ id: row.id });
+  const res = await getAddStorageDetailClick({ id: row.id });
   status.value = row.status;
   res.list.forEach(item => {
     const product = productSelectData.value.find(
@@ -174,20 +173,22 @@ const confirmCheckClick = async () => {
     productList: JSON.stringify(checkInfo.value.productList),
     audit_id: userInfo.value.id
   };
-  editRemoveStorageStatusClick(params, () => {
+  editAddStorageStatusClick(params, () => {
     checkDialogVisible.value = false;
   });
 };
 
 // 弹窗关闭事件
 const handleClose = () => {
-  removeStorageInfo.value = {};
+  addStorageInfo.value = {};
+  checkInfo.value = {};
+  oldProductList.value = [];
   formRef.value && formRef.value.resetFields();
 };
 
 // 产品选择
 const handleProductSelect = () => {
-  removeStorageInfo.value.productList = removeStorageInfo.value.selectId.map(item => {
+  addStorageInfo.value.productList = addStorageInfo.value.selectId.map(item => {
     const product = productSelectData.value.find(
       product => product.spec_id === item
     );
@@ -205,10 +206,10 @@ const handleProductSelect = () => {
 };
 
 const rules = {
-  remove_time: [
+  add_time: [
     {
       required: true,
-      message: '请选择出库时间',
+      message: '请选择入库时间',
       trigger: 'blur'
     }
   ],
@@ -223,14 +224,14 @@ const rules = {
 </script>
 
 <template>
-  <div class="in-storage-manage">
+  <div class="add-storage-manage">
     <div class="head">
       <div class="search-wrap">
         <div class="option" style="width: 120px;">
           <div class="value">
             <el-input
-              v-model="searchInfo.remove_code"
-              placeholder="请输入出库单号"
+              v-model="searchInfo.add_code"
+              placeholder="请输入入库单号"
               clearable
             />
           </div>
@@ -259,7 +260,7 @@ const rules = {
               clearable
             >
               <el-option label="待审批" :value="0" />
-              <el-option label="出库完成" :value="1" />
+              <el-option label="入库完成" :value="1" />
               <el-option label="已驳回" :value="2" />
             </el-select>
           </div>
@@ -288,40 +289,40 @@ const rules = {
               @change="timeChange"
               type="daterange"
               range-separator="至"
-              start-placeholder="出库开始时间"
-              end-placeholder="出库结束时间"
+              start-placeholder="入库开始时间"
+              end-placeholder="入库结束时间"
             />
           </div>
         </div>
       </div>
       <div class="btn">
-        <el-button type="primary" @click="getRemoveStorageList(searchInfo)" plain>
+        <el-button type="primary" @click="getAddStorageList(searchInfo)" plain>
           查询
         </el-button>
       </div>
       <div class="btn">
-        <el-button type="primary" @click="handleAddRemoveStorage">
-          添加出库单
+        <el-button type="primary" @click="handleAddAddStorage">
+          添加入库单
         </el-button>
       </div>
     </div>
     <div class="table">
       <el-table
-        :data="removeStorageData"
+        :data="addStorageData"
         border
         :header-cell-style="{ 'background-color': '#DDE2EE' }"
         align="center"
         height="100%"
       >
         <el-table-column
-          prop="remove_code"
-          label="出库单号"
+          prop="add_code"
+          label="入库单号"
           min-width="80"
           align="center"
         />
         <el-table-column
-          prop="remove_time"
-          label="出库时间"
+          prop="add_time"
+          label="入库时间"
           width="120"
           align="center"
         />
@@ -364,7 +365,7 @@ const rules = {
         </el-table-column>
         <el-table-column prop="status" label="状态" align="center">
           <template #default="scope">
-            {{ ['待审批', '出库完成', '已驳回'][scope.row.status] }}
+            {{ ['待审批', '入库完成', '已驳回'][scope.row.status] }}
           </template>
         </el-table-column>
         <el-table-column
@@ -379,7 +380,7 @@ const rules = {
               type="primary"
               size="small"
               v-if="scope.row.status === 0"
-              @click="handleEditRemoveStorage(scope.row)"
+              @click="handleEditAddStorage(scope.row)"
             >
               编辑
             </el-button>
@@ -387,7 +388,7 @@ const rules = {
               type="success"
               size="small"
               v-if="scope.row.status === 0"
-              @click="handleCheckRemoveStorage(scope.row, true)"
+              @click="handleCheckAddStorage(scope.row, true)"
             >
               审批
             </el-button>
@@ -395,7 +396,7 @@ const rules = {
               type="primary"
               size="small"
               v-if="scope.row.status === 1"
-              @click="handleCheckRemoveStorage(scope.row, false)"
+              @click="handleCheckAddStorage(scope.row, false)"
             >
               查看
             </el-button>
@@ -403,7 +404,7 @@ const rules = {
               type="danger"
               size="small"
               :disabled="scope.row.status === 1"
-              @click="handleDeleteRemoveStorage(scope.row)"
+              @click="handleDeleteAddStorage(scope.row)"
             >
               删除
             </el-button>
@@ -419,14 +420,14 @@ const rules = {
         layout="total, sizes, prev, pager, next"
         :page-sizes="[5, 10, 15, 20]"
         :total="total"
-        @size-change="getRemoveStorageList(searchInfo)"
-        @current-change="getRemoveStorageList(searchInfo)"
+        @size-change="getAddStorageList(searchInfo)"
+        @current-change="getAddStorageList(searchInfo)"
       />
     </div>
   </div>
   <el-dialog
     v-model="dialogVisible"
-    :title="isAdd ? '添加出库单' : '修改出库单'"
+    :title="isAdd ? '添加入库单' : '修改入库单'"
     width="650px"
     :close-on-click-modal="false"
     @close="handleClose"
@@ -434,23 +435,23 @@ const rules = {
     <div class="form">
       <el-form
         ref="formRef"
-        :model="removeStorageInfo"
+        :model="addStorageInfo"
         label-width="90px"
         :rules="rules"
       >
-        <el-form-item label="出库单号" prop="remove_code">
-          <el-input v-model="removeStorageInfo.remove_code" disabled />
+        <el-form-item label="入库单号" prop="add_code">
+          <el-input v-model="addStorageInfo.add_code" disabled />
         </el-form-item>
-        <el-form-item label="出库时间" prop="remove_time">
+        <el-form-item label="入库时间" prop="add_time">
           <el-date-picker
-            v-model="removeStorageInfo.remove_time"
+            v-model="addStorageInfo.add_time"
             type="date"
-            placeholder="请选择出库时间"
+            placeholder="请选择入库时间"
             value-format="YYYY-MM-DD"
           />
         </el-form-item>
         <el-form-item label="往来公司" prop="deal_company_id">
-          <el-select v-model="removeStorageInfo.deal_company_id">
+          <el-select v-model="addStorageInfo.deal_company_id">
             <el-option
               v-for="item in dealCompanyData"
               :key="item.id"
@@ -460,11 +461,11 @@ const rules = {
           </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="removeStorageInfo.description" />
+          <el-input v-model="addStorageInfo.description" />
         </el-form-item>
         <el-form-item label="产品选择" prop="deal_company_id">
           <el-select
-            v-model="removeStorageInfo.selectId"
+            v-model="addStorageInfo.selectId"
             multiple
             collapse-tags
             @change="handleProductSelect"
@@ -479,7 +480,7 @@ const rules = {
         </el-form-item>
         <div class="spec-table">
           <el-table
-            :data="removeStorageInfo.productList"
+            :data="addStorageInfo.productList"
             border
             :header-cell-style="{ 'background-color': '#DDE2EE' }"
           >
@@ -507,7 +508,7 @@ const rules = {
             </el-table-column>
             <el-table-column
               prop="product_price"
-              label="出库价格"
+              label="入库价格"
               min-width="80"
               align="center"
             >
@@ -522,7 +523,7 @@ const rules = {
             </el-table-column>
             <el-table-column
               prop="product_num"
-              label="出库数量"
+              label="入库数量"
               min-width="80"
               align="center"
             >
@@ -560,7 +561,7 @@ const rules = {
   </el-dialog>
   <el-dialog
     v-model="checkDialogVisible"
-    :title="isAudit ? '审核出库单' : '查看出库单'"
+    :title="isAudit ? '审核入库单' : '查看入库单'"
     width="650px"
     :close-on-click-modal="false"
     @close="handleClose"
@@ -574,12 +575,12 @@ const rules = {
             >已驳回</el-tag
           >
           <el-tag type="success" size="large" v-if="status === 1"
-            >出库完成</el-tag
+            >入库完成</el-tag
           >
         </div>
       </div>
       <div class="option">
-        <div class="label">出库单内容：</div>
+        <div class="label">入库单内容：</div>
         <div class="value">
           <div class="spec-table">
             <el-table
@@ -611,13 +612,13 @@ const rules = {
               </el-table-column>
               <el-table-column
                 prop="product_price"
-                label="出库价格"
+                label="入库价格"
                 min-width="80"
                 align="center"
               ></el-table-column>
               <el-table-column
                 prop="product_num"
-                label="出库数量"
+                label="入库数量"
                 min-width="80"
                 align="center"
               ></el-table-column>
@@ -636,7 +637,7 @@ const rules = {
         <div class="value">
           <el-radio-group v-model="checkInfo.status">
             <el-radio-button :label="2">驳回</el-radio-button>
-            <el-radio-button :label="1">确认出库</el-radio-button>
+            <el-radio-button :label="1">确认入库</el-radio-button>
           </el-radio-group>
         </div>
       </div>
@@ -653,7 +654,7 @@ const rules = {
 </template>
 
 <style scoped lang="less">
-.in-storage-manage {
+.add-storage-manage {
   width: 100%;
   height: 100%;
   background-color: #fff;

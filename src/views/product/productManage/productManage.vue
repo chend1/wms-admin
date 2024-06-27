@@ -1,6 +1,5 @@
 <script setup>
-import { reactive, ref, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
+import { reactive, ref } from 'vue';
 import { Delete } from '@element-plus/icons-vue';
 import useProductData from './useProductData';
 import useGroupData from '../groupManage/useGroupData';
@@ -494,7 +493,7 @@ const specRules = {
   .add-product {
     margin: 10px 0 8px;
     box-sizing: border-box;
-    padding: 0 15px 8px;
+    padding: 0 15px 10px;
     width: 100%;
     border-bottom: 1px solid #eee;
   }

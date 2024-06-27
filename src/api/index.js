@@ -74,13 +74,28 @@ export {
 
 // 入库单
 export {
-  inStorageList,
-  addInstorage,
-  editInstorage,
-  deleteInstorage,
-  getInstorageDetail,
-  addInstorageDetail,
-  editInstorageDetail,
-  deleteInstorageDetail,
-  getInstorageCode,
-} from './inStorage/index';
+  addStorageList,
+  getAddStorageCode,
+  addAddStorage,
+  editAddStorage,
+  deleteAddStorage,
+  getAddStorageDetail,
+  editAddStorageStatus,
+  addAddStorageDetail,
+  editAddStorageDetail,
+  deleteAddStorageDetail
+} from './addStorage/index';
+
+// 出库单
+export {
+  removeStorageList,
+  getRemoveStorageCode,
+  addRemoveStorage,
+  editRemoveStorage,
+  deleteRemoveStorage,
+  getRemoveStorageDetail,
+  editRemoveStorageStatus,
+  addRemoveStorageDetail,
+  editRemoveStorageDetail,
+  deleteRemoveStorageDetail
+} from './removeStorage/index';

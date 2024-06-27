@@ -1,39 +1,40 @@
 import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import {
-  inStorageList,
-  addInstorage,
-  editInstorage,
-  deleteInstorage,
-  getInstorageDetail,
-  addInstorageDetail,
-  editInstorageDetail,
-  deleteInstorageDetail,
-  getInstorageCode
+  addStorageList,
+  addAddStorage,
+  editAddStorage,
+  deleteAddStorage,
+  getAddStorageDetail,
+  addAddStorageDetail,
+  editAddStorageDetail,
+  deleteAddStorageDetail,
+  getAddStorageCode,
+  editAddStorageStatus
 } from '@/api';
 
-export default function useInStorageData() {
-  const inStorageData = ref([]);
+export default function useAddStorageData() {
+  const addStorageData = ref([]);
   const total = ref(0);
   let searchInfo = {};
   // 获取入库单列表
-  const getInStorageList = async (params, callback) => {
+  const getAddStorageList = async (params, callback) => {
     searchInfo = params;
-    const res = await inStorageList(params);
-    inStorageData.value = res.list;
+    const res = await addStorageList(params);
+    addStorageData.value = res.list;
     total.value = res.total;
     callback && callback();
   };
   // 获取入库单单号
-  const getInStorageCodeClick = async (params) => {
-    const res = await getInstorageCode(params);
+  const getAddStorageCodeClick = async (params) => {
+    const res = await getAddStorageCode(params);
     return res;
   }
   // 新增入库单
-  const addInstorageClick = async (params, callback) => {
+  const addAddStorageClick = async (params, callback) => {
     try {
-      await addInstorage(params);
-      getInStorageList(searchInfo);
+      await addAddStorage(params);
+      getAddStorageList(searchInfo);
       callback && callback();
       ElMessage({
         type: 'success',
@@ -44,11 +45,11 @@ export default function useInStorageData() {
     }
   };
   // 修改入库单
-  const editInstorageClick = async (params, callback) => {
+  const editAddStorageClick = async (params, callback) => {
     try {
-      await editInstorage(params);
+      await editAddStorage(params);
       callback && callback();
-      getInStorageList(searchInfo);
+      getAddStorageList(searchInfo);
       ElMessage({
         type: 'success',
         message: '修改成功',
@@ -59,7 +60,7 @@ export default function useInStorageData() {
   };
 
   // 删除入库单
-  const deleteInstorageClick = (params) => {
+  const deleteAddStorageClick = (params) => {
     ElMessageBox.confirm('确认删除该入库单吗？', '警告', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
@@ -67,8 +68,8 @@ export default function useInStorageData() {
     })
       .then(async () => {
         try {
-          await deleteInstorage(params);
-          getInStorageList(searchInfo);
+          await deleteAddStorage(params);
+          getAddStorageList(searchInfo);
           ElMessage({
             type: 'success',
             message: '删除成功',
@@ -79,17 +80,30 @@ export default function useInStorageData() {
       })
       .catch(() => {});
   };
-
+  // 审核入库单
+  const editAddStorageStatusClick = async (params, callback) => {
+    try {
+      await editAddStorageStatus(params);
+      callback && callback();
+      getAddStorageList(searchInfo);
+      ElMessage({
+        type: 'success',
+        message: '审核成功',
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
   // 获取入库单详情
-  const getInstorageDetailClick = async(params) => {
-    const res = await getInstorageDetail(params);
+  const getAddStorageDetailClick = async(params) => {
+    const res = await getAddStorageDetail(params);
     return res;
   }
 
   // 新增入库单详情
-  const addInstorageDetailClick = async (params, callback) => {
+  const addAddStorageDetailClick = async (params, callback) => {
     try {
-      await addInstorageDetail(params);
+      await addAddStorageDetail(params);
       callback && callback();
       ElMessage({
         type: 'success',
@@ -100,9 +114,9 @@ export default function useInStorageData() {
     }
   };
   // 修改入库单详情
-  const editInstorageDetailClick = async (params, callback) => {
+  const editAddStorageDetailClick = async (params, callback) => {
     try {
-      await editInstorageDetail(params);
+      await editAddStorageDetail(params);
       callback && callback();
       ElMessage({
         type: 'success',
@@ -113,7 +127,7 @@ export default function useInStorageData() {
     }
   };
   // 删除入库单详情
-  const deleteInstorageDetailClick = (params) => {
+  const deleteAddStorageDetailClick = (params) => {
     ElMessageBox.confirm('确认删除该入库单详情吗？', '警告', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
@@ -121,7 +135,7 @@ export default function useInStorageData() {
     })
       .then(async () => {
         try {
-          await deleteInstorageDetail(params);
+          await deleteAddStorageDetail(params);
           ElMessage({
             type: 'success',
             message: '删除成功',
@@ -133,16 +147,17 @@ export default function useInStorageData() {
       .catch(() => {});
   };
   return {
-    inStorageData,
+    addStorageData,
     total,
-    getInStorageList,
-    getInStorageCodeClick,
-    addInstorageClick,
-    editInstorageClick,
-    deleteInstorageClick,
-    getInstorageDetailClick,
-    addInstorageDetailClick,
-    editInstorageDetailClick,
-    deleteInstorageDetailClick,
+    getAddStorageList,
+    getAddStorageCodeClick,
+    addAddStorageClick,
+    editAddStorageClick,
+    deleteAddStorageClick,
+    getAddStorageDetailClick,
+    addAddStorageDetailClick,
+    editAddStorageDetailClick,
+    deleteAddStorageDetailClick,
+    editAddStorageStatusClick
   };
 }

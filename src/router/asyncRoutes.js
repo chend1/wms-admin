@@ -71,15 +71,21 @@ export const asyncRoutes = [
   },
   {
     path: '/warehouse',
-    redirect: '/warehouse/inStorage',
+    redirect: '/warehouse/addStorage',
     meta: { title: '仓储管理', isLayout: true },
     name: 'warehouse',
     children: [
       {
-        path: '/warehouse/inStorage',
-        component: () => import('@/views/warehouse/inStorage/inStorage.vue'),
+        path: '/warehouse/addStorage',
+        component: () => import('@/views/warehouse/addStorage/addStorage.vue'),
         meta: { title: '入库单', isLayout: true },
-        name: 'inStorage',
+        name: 'addStorage',
+      },
+      {
+        path: '/warehouse/removeStorage',
+        component: () => import('@/views/warehouse/removeStorage/removeStorage.vue'),
+        meta: { title: '出库单', isLayout: true },
+        name: 'removeStorage',
       },
     ],
   },
