@@ -87,6 +87,12 @@ export const asyncRoutes = [
         meta: { title: '出库单', isLayout: true },
         name: 'removeStorage',
       },
+      {
+        path: '/warehouse/inventory',
+        component: () => import('@/views/warehouse/inventory/inventory.vue'),
+        meta: { title: '库存统计', isLayout: true },
+        name: 'inventory',
+      },
     ],
   },
 ];
