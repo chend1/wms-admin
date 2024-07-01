@@ -1,14 +1,8 @@
 <script setup>
 import { reactive, ref, computed } from 'vue';
-import useDealCompanyData from '@/views/product/dealCompanyManage/useDealCompanyData';
 import useGroupData from '@/views/product/groupManage/useGroupData';
 import useUnitData from '@/views/product/unitManage/useUnitData';
 import useProductData from '@/views/product/productManage/useProductData';
-
-// 往来公司
-const { dealCompanyData, getDealCompanyList, getDealCompanyName } =
-  useDealCompanyData();
-getDealCompanyList({ page: 1, size: 100 });
 
 const { groupOptions, getGroupList, getGroupName } = useGroupData();
 getGroupList({ status: 1 });
@@ -36,20 +30,13 @@ getProductList(searchInfo.value);
             />
           </div>
         </div>
-        <div class="option" style="width: 130px">
+        <div class="option" style="width: 120px">
           <div class="value">
-            <el-select
-              v-model="searchInfo.deal_company_id"
-              placeholder="往来公司查询"
+            <el-input
+              v-model="searchInfo.code"
+              placeholder="请输入产品编码"
               clearable
-            >
-              <el-option
-                v-for="item in dealCompanyData"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
+            />
           </div>
         </div>
         <div class="option" style="width: 130px">
@@ -71,13 +58,13 @@ getProductList(searchInfo.value);
         <div class="option" style="width: 115px">
           <div class="value">
             <el-select
-              v-model="searchInfo.status"
+              v-model="searchInfo.inventory_type"
               placeholder="请选择状态"
               clearable
             >
-              <el-option label="待审批" :value="0" />
-              <el-option label="入库完成" :value="1" />
-              <el-option label="已驳回" :value="2" />
+              <el-option label="入库数量为零" :value="0" />
+              <el-option label="出库数量为零" :value="1" />
+              <el-option label="库存为零" :value="2" />
             </el-select>
           </div>
         </div>
@@ -96,9 +83,9 @@ getProductList(searchInfo.value);
         align="center"
         height="100%"
       >
+        <el-table-column prop="code" label="产品编码" align="center" />
         <el-table-column prop="name" label="产品名称" align="center" />
         <el-table-column prop="spec" label="产品规格" align="center" />
-        <el-table-column prop="code" label="产品编码" align="center" />
         <el-table-column prop="group_id" label="产品分类" align="center">
           <template #default="scope">
             {{ getGroupName(scope.row.group_id) }}
@@ -126,7 +113,11 @@ getProductList(searchInfo.value);
         />
         <el-table-column prop="code" label="库存数量" align="center">
           <template #default="scope">
-            {{ (scope.row.init_num || 0) + (scope.row.add_num || 0) - (scope.row.remove_num || 0) }}
+            {{
+              (scope.row.init_num || 0) +
+              (scope.row.add_num || 0) -
+              (scope.row.remove_num || 0)
+            }}
           </template>
         </el-table-column>
       </el-table>

@@ -8,7 +8,7 @@ const {
   getDealCompanyList,
   addDealCompanyClick,
   editDealCompanyClick,
-  deleteDealCompanyClick,
+  deleteDealCompanyClick
 } = useDealCompanyData();
 // 搜索信息
 const searchInfo = reactive({
@@ -88,8 +88,47 @@ const rules = {
 
 <template>
   <div class="company-manage">
-    <div class="add-company">
-      <el-button type="primary" @click="handleAddRole"> 添加往来单位 </el-button>
+    <div class="head">
+      <div class="search-wrap">
+        <div class="option" style="width: 130px">
+          <!-- <div class="label">：</div> -->
+          <div class="value">
+            <el-input
+              v-model="searchInfo.phone"
+              placeholder="请输入手机号"
+              clearable
+            />
+          </div>
+        </div>
+        <div class="option" style="width: 150px">
+          <!-- <div class="label">：</div> -->
+          <div class="value">
+            <el-input
+              v-model="searchInfo.product_name"
+              placeholder="请输入往来单位名称"
+              clearable
+            />
+          </div>
+        </div>
+        <div class="option" style="width: 230px">
+          <!-- <div class="label">：</div> -->
+          <div class="value">
+            <el-input
+              v-model="searchInfo.keyword"
+              placeholder="地址，业务，描述的关键字查询"
+              clearable
+            />
+          </div>
+        </div>
+      </div>
+      <div class="btn">
+        <el-button type="primary" @click="getDealCompanyList(searchInfo)"> 查询 </el-button>
+      </div>
+      <div class="btn">
+        <el-button type="primary" @click="handleAddRole">
+          添加往来单位
+        </el-button>
+      </div>
     </div>
     <div class="table">
       <el-table
@@ -105,12 +144,22 @@ const rules = {
           min-width="100"
           align="center"
         />
-        <el-table-column prop="phone" width="120" label="手机号" align="center" />
+        <el-table-column
+          prop="phone"
+          width="120"
+          label="手机号"
+          align="center"
+        />
         <el-table-column prop="local_phone" label="400电话" align="center" />
         <el-table-column prop="address" label="公司地址" align="center" />
         <el-table-column prop="business" label="主营业务" align="center" />
         <el-table-column prop="description" label="描述" align="center" />
-        <el-table-column prop="create_time" width="170" label="创建时间" align="center" />
+        <el-table-column
+          prop="create_time"
+          width="170"
+          label="创建时间"
+          align="center"
+        />
         <el-table-column prop="class_id" label="所属分类" align="center">
           <template #default="scope">
             {{ scope.row.class_id === 1 ? '入库' : '出库' }}
@@ -164,22 +213,37 @@ const rules = {
         label-width="120px"
       >
         <el-form-item label="往来单位名称" prop="name">
-          <el-input v-model="companyInfo.name" placeholder="请输入往来单位名称" />
+          <el-input
+            v-model="companyInfo.name"
+            placeholder="请输入往来单位名称"
+          />
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="companyInfo.phone" placeholder="请输入手机号" />
         </el-form-item>
         <el-form-item label="400电话" prop="local_phone">
-          <el-input v-model="companyInfo.local_phone" placeholder="请输入400电话" />
+          <el-input
+            v-model="companyInfo.local_phone"
+            placeholder="请输入400电话"
+          />
         </el-form-item>
         <el-form-item label="主营业务" prop="business">
-          <el-input v-model="companyInfo.business" placeholder="请输入主营业务" />
+          <el-input
+            v-model="companyInfo.business"
+            placeholder="请输入主营业务"
+          />
         </el-form-item>
         <el-form-item label="公司地址" prop="address">
-          <el-input v-model="companyInfo.address" placeholder="请输入公司地址" />
+          <el-input
+            v-model="companyInfo.address"
+            placeholder="请输入公司地址"
+          />
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="companyInfo.description" placeholder="请输入描述" />
+          <el-input
+            v-model="companyInfo.description"
+            placeholder="请输入描述"
+          />
         </el-form-item>
         <el-form-item label="分类" prop="class_id">
           <el-radio-group v-model="companyInfo.class_id">
@@ -204,15 +268,40 @@ const rules = {
   height: 100%;
   background-color: #fff;
   box-sizing: border-box;
-  padding: 10px;
+  padding: 5px 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  .add-company {
+  .head {
     margin: 10px 0;
     box-sizing: border-box;
-    padding: 0 10px;
+    padding: 0 15px 0px;
     width: 100%;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-wrap: wrap;
+    .search-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      .option {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+        margin-bottom: 10px;
+        .label {
+          margin-right: 10px;
+          font-size: 14px;
+          color: #666;
+          width: 70px;
+        }
+        .value {
+          flex: 1;
+        }
+      }
+    }
+    .btn {
+      margin-right: 10px;
+    }
   }
   .table {
     width: 100%;

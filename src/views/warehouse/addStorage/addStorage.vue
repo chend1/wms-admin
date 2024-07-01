@@ -49,7 +49,7 @@ getAddStorageList(searchInfo);
 const timeChange = () => {
   searchInfo.strat_time = searchInfo.times[0] || '';
   searchInfo.end_time = searchInfo.times[1] || '';
-}
+};
 // 入库单信息
 const addStorageInfo = ref({});
 
@@ -167,11 +167,15 @@ const handleCheckAddStorage = async (row, type) => {
 
 // 确认审批
 const confirmCheckClick = async () => {
+  if(checkInfo.value.status === 2 && !checkInfo.value.refuse_reason) {
+    return ElMessage.warning('请输入拒绝原因');
+  }
   const params = {
     id: checkInfo.value.id,
     status: checkInfo.value.status,
     productList: JSON.stringify(checkInfo.value.productList),
-    audit_id: userInfo.value.id
+    audit_id: userInfo.value.id,
+    refuse_reason: checkInfo.value.refuse_reason
   };
   editAddStorageStatusClick(params, () => {
     checkDialogVisible.value = false;
@@ -199,6 +203,7 @@ const handleProductSelect = () => {
       ? { ...product, product_price: product.pay_price }
       : {
           ...product,
+          id: null,
           ...newProduct
         };
     return { ...myProduct };
@@ -227,7 +232,7 @@ const rules = {
   <div class="add-storage-manage">
     <div class="head">
       <div class="search-wrap">
-        <div class="option" style="width: 120px;">
+        <div class="option" style="width: 120px">
           <div class="value">
             <el-input
               v-model="searchInfo.add_code"
@@ -236,7 +241,7 @@ const rules = {
             />
           </div>
         </div>
-        <div class="option" style="width: 130px;">
+        <div class="option" style="width: 130px">
           <div class="value">
             <el-select
               v-model="searchInfo.deal_company_id"
@@ -252,7 +257,7 @@ const rules = {
             </el-select>
           </div>
         </div>
-        <div class="option" style="width: 115px;">
+        <div class="option" style="width: 115px">
           <div class="value">
             <el-select
               v-model="searchInfo.status"
@@ -265,14 +270,14 @@ const rules = {
             </el-select>
           </div>
         </div>
-        <div class="option" style="width: 115px;">
+        <div class="option" style="width: 115px">
           <div class="value">
             <el-select
               v-model="searchInfo.user_id"
               placeholder="请选择用户名"
               clearable
             >
-            <el-option
+              <el-option
                 v-for="item in userData"
                 :key="item.id"
                 :label="item.name"
@@ -377,12 +382,20 @@ const rules = {
         <el-table-column prop="" label="操作" width="220" align="center">
           <template #default="scope">
             <el-button
-              type="primary"
+              type="success"
               size="small"
-              v-if="scope.row.status === 0"
+              v-if="scope.row.status === 1 || scope.row.status === 2"
+              @click="handleCheckAddStorage(scope.row, false)"
+            >
+              查看
+            </el-button>
+            <el-button
+              :type="scope.row.status !== 2 ? 'primary' : 'warning'"
+              size="small"
+              :disabled="scope.row.status === 1"
               @click="handleEditAddStorage(scope.row)"
             >
-              编辑
+              {{ scope.row.status === 0 ? '编辑' : '重检' }}
             </el-button>
             <el-button
               type="success"
@@ -391,14 +404,6 @@ const rules = {
               @click="handleCheckAddStorage(scope.row, true)"
             >
               审批
-            </el-button>
-            <el-button
-              type="primary"
-              size="small"
-              v-if="scope.row.status === 1"
-              @click="handleCheckAddStorage(scope.row, false)"
-            >
-              查看
             </el-button>
             <el-button
               type="danger"
@@ -473,7 +478,7 @@ const rules = {
             <el-option
               v-for="item in productSelectData"
               :key="item.spec_id"
-              :label="item.name + '（规格：' + item.spec_id + '）'"
+              :label="item.name + '（规格：' + item.spec + '）'"
               :value="item.spec_id"
             ></el-option>
           </el-select>
@@ -641,6 +646,19 @@ const rules = {
           </el-radio-group>
         </div>
       </div>
+      <div class="option" v-if="checkInfo.status === 2">
+        <div class="label">驳回原因：</div>
+        <div class="value">
+          <el-input
+            v-model="checkInfo.refuse_reason"
+            :disabled="!isAudit"
+            type="textarea"
+            :rows="4"
+            resize="none"
+            placeholder="请输入内容"
+          />
+        </div>
+      </div>
     </div>
     <template #footer>
       <span class="dialog-footer">
@@ -692,6 +710,7 @@ const rules = {
     }
     .btn {
       margin-right: 10px;
+      margin-bottom: 10px;
     }
   }
   .table {

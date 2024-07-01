@@ -23,13 +23,16 @@ const {
   deleteProductSpecClick
 } = useProductData();
 // 搜索信息
-const searchInfo = reactive({
-  keyword: ''
-});
+const searchInfo = reactive({});
 const activeNames = ref([]);
-getProductList(searchInfo, () => {
-  activeNames.value = productData.value.map(item => item.id);
-});
+
+// 获取产品列表
+const getProductListClick = () => {
+  getProductList(searchInfo, () => {
+    activeNames.value = productData.value.map(item => item.id);
+  });
+};
+getProductListClick();
 // 产品信息
 const productInfo = ref({
   spec_list: [
@@ -77,6 +80,7 @@ const confirmClick = () => {
         };
         addProductClick(params, () => {
           dialogVisible.value = false;
+          activeNames.value = productData.value.map(item => item.id);
         });
       } else {
         const params = {
@@ -84,6 +88,7 @@ const confirmClick = () => {
         };
         editProductClick(params, () => {
           dialogVisible.value = false;
+          activeNames.value = productData.value.map(item => item.id);
         });
       }
     }
@@ -194,7 +199,7 @@ const isAddSpec = ref(false);
 const specInfo = ref({});
 
 // 新增规格
-const handleAddSpec = (item) => {
+const handleAddSpec = item => {
   console.log(item);
   const len = item.specs ? item.specs.length : 1;
   isAddSpec.value = true;
@@ -246,14 +251,48 @@ const specRules = {
       message: '请选择产品规格',
       trigger: 'blur'
     }
-  ],
-}
+  ]
+};
 </script>
 
 <template>
   <div class="product-manage">
-    <div class="add-product">
-      <el-button type="primary" @click="handleAddProduct"> 添加产品 </el-button>
+    <div class="head">
+      <div class="search-wrap">
+        <div class="option" style="width: 120px">
+          <div class="value">
+            <el-input
+              v-model="searchInfo.product_name"
+              placeholder="请输入产品名称"
+              clearable
+            />
+          </div>
+        </div>
+        <div class="option" style="width: 130px">
+          <div class="value">
+            <el-select
+              v-model="searchInfo.group_id"
+              placeholder="产品分类查询"
+              clearable
+            >
+              <el-option
+                v-for="item in groupOptions"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </div>
+        </div>
+      </div>
+      <div class="btn">
+        <el-button type="primary" @click="getProductListClick"> 查询 </el-button>
+      </div>
+      <div class="btn">
+        <el-button type="primary" @click="handleAddProduct">
+          添加产品
+        </el-button>
+      </div>
     </div>
     <div class="table">
       <el-collapse v-model="activeNames" v-if="productData.length">
@@ -490,12 +529,36 @@ const specRules = {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  .add-product {
-    margin: 10px 0 8px;
+  .head {
+    margin: 10px 0;
     box-sizing: border-box;
-    padding: 0 15px 10px;
+    padding: 0 15px 0px;
     width: 100%;
     border-bottom: 1px solid #eee;
+    display: flex;
+    flex-wrap: wrap;
+    .search-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      .option {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+        margin-bottom: 10px;
+        .label {
+          margin-right: 10px;
+          font-size: 14px;
+          color: #666;
+          width: 70px;
+        }
+        .value {
+          flex: 1;
+        }
+      }
+    }
+    .btn {
+      margin-right: 10px;
+    }
   }
   .table {
     width: 100%;
